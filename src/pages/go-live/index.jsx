@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-export default function Live() {
+export default function GoLive() {
   const constraints = {
     audio: true,
     video: {
@@ -16,7 +16,7 @@ export default function Live() {
     if (isMediaAvaiable) {
       navigator.mediaDevices.getUserMedia(constraints)
         .then((mediaStream) => {
-          document.querySelector('#live_video').srcObject = mediaStream;
+          document.querySelector('#broadcast').srcObject = mediaStream;
           const mediaRecorder = new MediaRecorder(mediaStream);
           mediaRecorder.start(2000);
           mediaRecorder.ondataavailable = (e) => {
@@ -28,8 +28,8 @@ export default function Live() {
 
   return (
     <>
-      <div>Live</div>
-      <video id="live_video" controls autoPlay playsInline muted />
+      <div>Go Live</div>
+      <video id="broadcast" controls autoPlay playsInline muted />
     </>
   );
 }

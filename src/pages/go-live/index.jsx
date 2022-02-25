@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { createPeer } from '../../utils/peer';
 
 export default function GoLive() {
   const constraints = {
@@ -17,11 +18,8 @@ export default function GoLive() {
       navigator.mediaDevices.getUserMedia(constraints)
         .then((mediaStream) => {
           document.querySelector('#broadcast').srcObject = mediaStream;
-          const mediaRecorder = new MediaRecorder(mediaStream);
-          mediaRecorder.start(2000);
-          mediaRecorder.ondataavailable = (e) => {
-            console.log(e.data);
-          };
+          const peer = createPeer('/broadcast');
+          mediaStream.getTracks().forEach((track) => peer.addTrack(track, mediaStream));
         });
     }
   }, []);

@@ -1,12 +1,21 @@
-import React, { useEffect } from 'react';
+import React from 'react';
+import { createPeer } from '../../utils/peer';
 
 export default function WatchLive() {
-  useEffect(() => {
-  }, []);
-
   return (
     <>
-      <div>Watch Live</div>
+      <button
+        type="button"
+        onClick={() => {
+          const peer = createPeer('/consumer');
+          peer.ontrack = (e) => {
+            [document.getElementById('watch-live').srcObject] = e.streams;
+          };
+          peer.addTransceiver('video', { direction: 'recvonly' });
+        }}
+      >
+        Watch Live
+      </button>
       <video id="watch-live" controls autoPlay playsInline muted />
     </>
   );

@@ -6,14 +6,16 @@ import {
 } from 'react-router-dom';
 import './assets/styles/index.sass';
 import Landing from './pages/landing';
-import Live from './pages/live';
+import GoLive from './pages/go-live';
+import WatchLive from './pages/watch-live';
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Landing />} />
-        <Route path="go-live" element={<Live />} />
+        <Route path="go-live" element={<GoLive />} />
+        <Route path="watch-live" element={<WatchLive />} />
       </Routes>
     </BrowserRouter>
   );

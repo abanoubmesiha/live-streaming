@@ -19,7 +19,7 @@ export default function Landing() {
         <Button
           variant="outline-success"
           size="lg"
-          onClick={() => navigate('/watch')}
+          onClick={() => navigate('/watch-live')}
         >
           Watch a Live
         </Button>

@@ -4,6 +4,7 @@ import { createPeer } from '../../utils/peer';
 
 export default function WatchLive() {
   const [dataChannelState, setDataChannelState] = useState({});
+  const [pendingComment, setPendingComment] = useState('');
 
   useEffect(async () => {
     const peer = createPeer('/consumer');
@@ -28,15 +29,23 @@ export default function WatchLive() {
   }, []);
   return (
     <section className="watch-live">
+      <video id="watch-live" controls autoPlay playsInline muted />
+      Add a comment...
+      <textarea
+        type="textarea"
+        rows={5}
+        onChange={(e) => setPendingComment(e.target.value)}
+        value={pendingComment}
+      />
       <button
         type="button"
         onClick={() => {
-          dataChannelState.send('Hi from button');
+          dataChannelState.send(pendingComment);
+          setPendingComment('');
         }}
       >
-        Send a message
+        Submit
       </button>
-      <video id="watch-live" controls autoPlay playsInline muted />
     </section>
   );
 }

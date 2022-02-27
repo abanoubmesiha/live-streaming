@@ -1,31 +1,32 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { createPeer } from '../../utils/peer';
 
+const connectionOwnerId = Math.random().toString().slice(3, -1);
 export default function WatchLive() {
-  const [dataChannelState, setDataChannelState] = useState({});
+  const [dataChannelState, setDataChannelState] = useState(null);
   const [pendingComment, setPendingComment] = useState('');
+  const [comments, setComments] = useState([]);
 
+  useEffect(() => {
+    if (dataChannelState) {
+      dataChannelState.onmessage = (e) => {
+        setComments([...comments, JSON.parse(e.data)]);
+      };
+    }
+  }, [comments.length]);
   useEffect(async () => {
     const peer = createPeer('/consumer');
     peer.ontrack = (e) => {
       [document.getElementById('watch-live').srcObject] = e.streams;
     };
     peer.addTransceiver('video', { direction: 'recvonly' });
-    // *
-    const localConnection = new RTCPeerConnection();
-    const dataChannel = localConnection.createDataChannel('channel');
+    const dataChannel = peer.createDataChannel('channel');
     dataChannel.onopen = () => {
-      console.log('Connection Opened');
       setDataChannelState(dataChannel);
     };
-    dataChannel.onmessage = (e) => console.log(`Just got a message${e.data}`);
-    const offer = await localConnection.createOffer();
-    await localConnection.setLocalDescription(offer);
-
-    const { data } = await axios.post('http://localhost:8000/comments', { offer: localConnection.localDescription });
-    const answerDesc = new RTCSessionDescription(data.answer);
-    localConnection.setRemoteDescription(answerDesc).catch((e) => console.log(e));
+    dataChannel.onmessage = (e) => {
+      setComments([...comments, JSON.parse(e.data)]);
+    };
   }, []);
   return (
     <section className="watch-live">
@@ -40,12 +41,29 @@ export default function WatchLive() {
       <button
         type="button"
         onClick={() => {
-          dataChannelState.send(pendingComment);
+          dataChannelState?.send(JSON.stringify({
+            body: pendingComment,
+            timestamp: new Date(),
+            id: Math.random().toString().slice(2, -1),
+            connectionOwnerId,
+          }));
           setPendingComment('');
         }}
       >
         Submit
       </button>
+      <div className="comments">
+        {comments?.length > 0 && comments.map((comment) => (
+          <h6 key={comment.id}>
+            {comment.body}
+            {' '}
+            -
+            {' '}
+            { comment.connectionOwnerId === connectionOwnerId ? 'You' : comment.connectionOwnerId }
+
+          </h6>
+        ))}
+      </div>
     </section>
   );
 }

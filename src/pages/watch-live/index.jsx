@@ -19,6 +19,7 @@ export default function WatchLive() {
     peer.ontrack = (e) => {
       [document.getElementById('watch-live').srcObject] = e.streams;
     };
+    peer.addTransceiver('audio');
     peer.addTransceiver('video', { direction: 'recvonly' });
     const dataChannel = peer.createDataChannel('channel');
     dataChannel.onopen = () => {

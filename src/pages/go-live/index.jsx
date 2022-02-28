@@ -25,9 +25,11 @@ export default function GoLive() {
   }, []);
 
   return (
-    <>
-      <div>Go Live</div>
-      <video id="broadcast" controls autoPlay playsInline muted />
-    </>
+    <section className="go-live">
+      <div>
+        <h1>Go Live</h1>
+        <video id="broadcast" controls autoPlay playsInline muted />
+      </div>
+    </section>
   );
 }
